@@ -1,0 +1,64 @@
+﻿@model PagedList.Core.IPagedList<YasserSports.Models.Product>
+@{
+    string search = (string)ViewData["Search"]!;
+}
+<h2 class="text-center mb-5">List Of Products</h2>
+<div class="row mb-5">
+    <div class="col">
+        <a class="btn btn-primary" asp-controller="Products" asp-action="Create">New Product</a>
+    </div>
+    <div class="col">
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" name="search" value="@search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Brand</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Image</th>
+            <th>Create At</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Id</td>
+                <td>@product.Name</td>
+                <td>@product.Brand</td>
+                <td>@product.Category</td>
+                <td>@(product.Price)$</td>
+                <td>
+                    <img src="~/wears/@product.ImageFileName" width="100" />
+                </td>
+                <td>@product.CreateAt.ToString("MM/dd/yyyy")</td>
+                <td style="white-space:nowrap">
+                    <a class="btn btn-primary btn-sm" asp-controller="Products" asp-action="Edit"
+                       asp-route-id="@product.Id">Edit</a>
+                    <a class="btn btn-danger btn-sm" asp-controller="Products" asp-action="Delete"
+                       asp-route-id="@product.Id" onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Pagination Controls -->
+@if (Model.HasPreviousPage)
+{
+    <a asp-controller="Products" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)" asp-route-search="@search" class="btn btn-link">Previous</a>
+}
+<span>Page @Model.PageNumber of @Model.PageCount</span>
+@if (Model.HasNextPage)
+{
+    <a asp-controller="Products" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)" asp-route-search="@search" class="btn btn-link">Next</a>
+}

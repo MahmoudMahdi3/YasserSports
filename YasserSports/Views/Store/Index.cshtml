@@ -1,0 +1,72 @@
+﻿@{
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    string searchQuery = ViewBag.SearchQuery ?? "";
+}
+
+<h2 class="pb-4 text-center">Products</h2>
+
+<!-- Search Form -->
+<form method="get" action="@Url.Action("Index", "Store")" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="searchQuery" class="form-control" placeholder="Search products..."
+               value="@searchQuery" />
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<div class="row mb-5 g-3">
+    @foreach (var product in ViewBag.Products)
+    {
+        <div class="col-lg-3 col-md-6">
+            <div class="rounded border shadow p-3 text-center h-100">
+                <img src="/wears/@product.ImageFileName" class="img-fluid" alt="..."
+                     style="height: 180px; object-fit: contain" />
+                <hr />
+                <h5 class="py-2">@product.Name</h5>
+                <p>
+                    Brand: @product.Brand, Category: @product.Category
+                </p>
+                <h4 class="mb-3">@(product.Price)$</h4>
+                <a class="btn btn-primary btn-sm mb-2" asp-controller="Store"
+                   asp-action="Details" asp-route-id="@product.Id" role="button">Details</a>
+                <button type="button" class="btn btn-warning btn-sm mb-2" onclick="addToCart(this, @product.Id)">
+                    Add to Cart <i class="bi bi-cart4"></i>
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Pagination Controls -->
+<nav>
+    <ul class="pagination justify-content-center">
+        @if (currentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-controller="Store" asp-action="Index" asp-route-page="@(currentPage - 1)"
+                   asp-route-searchQuery="@searchQuery">
+                    Previous
+                </a>
+            </li>
+        }
+
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            <li class="page-item @(i == currentPage ? "active" : "")">
+                <a class="page-link" asp-controller="Store" asp-action="Index" asp-route-page="@i"
+                   asp-route-searchQuery="@searchQuery">@i</a>
+            </li>
+        }
+
+        @if (currentPage < totalPages)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-controller="Store" asp-action="Index" asp-route-page="@(currentPage + 1)"
+                   asp-route-searchQuery="@searchQuery">
+                    Next
+                </a>
+            </li>
+        }
+    </ul>
+</nav>
